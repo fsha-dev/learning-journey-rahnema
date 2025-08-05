@@ -1,40 +1,42 @@
 "use strict";
-const model = {
+let state = {
     todos: [
-        { title: "drawing", done: true },
-        { title: "run", done: false },
-        { title: "danceee", done: true },
+        { id: 1, title: "Get 1", done: false },
+        { id: 2, title: "Get 2", done: true },
+        { id: 3, title: "Get 3", done: true },
     ],
-    selectedFilter: "Done",
-};
+    selectedFilter: "All",
+}; //it is called state too. logic that our app is work on
+const setState = (fn) => {
+    state = fn(state); //mutate state
+    render(state);
+}; // fn->state -> setState(new state)🙋‍♀️⁉️🤔
 //function toggle todo
-const toggleTodo = (index, model) => {
-    const newModel = {
-        ...model,
-        todos: model.todos.map((x, i) => i === index ? { ...x, done: !x.done } : x),
-    };
-    render(newModel);
+const toggleTodo = (clickedID) => {
+    setState((state) => ({
+        ...state,
+        todos: state.todos.map((x) => x.id === clickedID ? { ...x, done: !x.done } : x),
+    }));
 };
 // function add todo
-const addTodo = (todo, model) => {
-    const newModel = {
-        ...model,
-        todos: [...model.todos, { title: todo, done: false }],
-    };
-    render(newModel);
+const addTodo = (todo) => {
+    setState((state) => ({
+        ...state,
+        todos: [
+            ...state.todos,
+            { title: todo, done: false, id: state.todos.length + 1 },
+        ],
+    }));
+    // id:state.todos.length is the lenght of previous state , so i add 1 for the new todo that is add(length of new array when we add todo = length previous todolist + 1)
 };
 //why🙋‍♀️🤔⁉️
-// we use ...spread operator not to mutate origianl model?why?why don't we just use to push them item?
+// we use ...spread operator not to mutate origianl state?why?why don't we just use to push them item?
 // function filtering
-const selectedFilter = (filter, model) => {
-    const newModel = {
-        ...model,
-        selectedFilter: filter,
-    };
-    render(newModel);
+const selectedFilter = (filter) => {
+    setState((state) => ({ ...state, selectedFilter: filter }));
 }; //btns by using this function while click on them can change the filter mode
 //run todo app
-function render(model) {
+function render(state) {
     //UI
     //variables (todo form)
     const app = document.getElementById("app"); //🤔may cause problem
@@ -53,10 +55,10 @@ function render(model) {
     app.append(form);
     const ul = document.createElement("ul");
     // variable todo list(ul,li)
-    //ui based on model(displaying what is inside model as todolits container)
-    model.todos
+    //ui based on state(displaying what is inside state as todolits container)
+    state.todos
         .filter((todoItem) => {
-        switch (model.selectedFilter) {
+        switch (state.selectedFilter) {
             case "All":
                 return todoItem;
             case "Done":
@@ -78,9 +80,10 @@ function render(model) {
         li.style.textDecoration =
             todoItem.done === true ? "line-through" : "none";
         // set text-decoration based on its property(status todo) is done or not
-        // return todo of the todolist(inside the model todolist) as li(list item)
+        // return todo of the todolist(inside the state todolist) as li(list item)
         li.addEventListener("click", () => {
-            toggleTodo(index, model);
+            const clickedID = todoItem.id;
+            toggleTodo(clickedID);
         });
         //implement toggle todo
         return li;
@@ -114,16 +117,16 @@ function render(model) {
     const allBtn = createFilteredBtn("All");
     const doneBtn = createFilteredBtn("done");
     todoBtn.addEventListener("click", () => {
-        selectedFilter("Todo", model);
+        selectedFilter("Todo");
     });
     allBtn.addEventListener("click", () => {
-        selectedFilter("All", model);
+        selectedFilter("All");
     });
     doneBtn.addEventListener("click", () => {
-        selectedFilter("Done", model);
+        selectedFilter("Done");
     });
-    //filter todo list based on model filter properties
-    switch (model.selectedFilter) {
+    //filter todo list based on state filter properties
+    switch (state.selectedFilter) {
         case "All":
             selectedBtn(allBtn);
             break;
@@ -136,7 +139,7 @@ function render(model) {
     }
     form.addEventListener("submit", (e) => {
         e.preventDefault(); //what is e.preventDefault???🤔⁉️🙋‍♀️
-        addTodo(input.value, model);
+        addTodo(input.value);
         input.value = "";
     }); //💡🌞use sumbit for forms
     const filterContainer = document.createElement("div");
@@ -145,4 +148,4 @@ function render(model) {
     filterContainer.append(todoBtn);
     filterContainer.append(doneBtn);
 }
-render(model);
+render(state);
