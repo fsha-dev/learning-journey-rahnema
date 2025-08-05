@@ -1,0 +1,5 @@
+{
+  "editor.suggestOnTriggerCharacters": false,
+  "editor.inlineSuggest.suppressSuggestions": true,
+  "editor.suggest.selectionMode": "never"
+}
