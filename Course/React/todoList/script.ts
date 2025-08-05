@@ -2,6 +2,7 @@
 type Filter = "All" | "Done" | "Todo";
 
 interface TodoItem {
+  id: number;
   title: string;
   done: boolean;
 }
@@ -12,19 +13,19 @@ interface Model {
 
 const model: Model = {
   todos: [
-    { title: "Get 1", done: false },
-    { title: "Get 2", done: true },
-    { title: "Get 3", done: true },
+    { id: 1, title: "Get 1", done: false },
+    { id: 2, title: "Get 2", done: true },
+    { id: 3, title: "Get 3", done: true },
   ],
   selectedFilter: "Done",
 };
 
 //function toggle todo
-const toggleTodo = (index: number, model: Model) => {
+const toggleTodo = (clickedID: number, model: Model) => {
   const newModel = {
     ...model,
-    todos: model.todos.map((x, i) =>
-      i === index ? { ...x, done: !x.done } : x
+    todos: model.todos.map((x) =>
+      x.id === clickedID ? { ...x, done: !x.done } : x
     ),
   };
   render(newModel);
@@ -34,7 +35,10 @@ const toggleTodo = (index: number, model: Model) => {
 const addTodo = (todo: string, model: Model) => {
   const newModel = {
     ...model,
-    todos: [...model.todos, { title: todo, done: false }],
+    todos: [
+      ...model.todos,
+      { title: todo, done: false, id: model.todos.length + 1 },
+    ], // id:model.todos.length is the lenght of previous model , so i add 1 for the new todo that is add(length of new array when we add todo = length previous todolist + 1)
   };
   render(newModel);
 };
@@ -102,7 +106,8 @@ function render(model: Model) {
       // set text-decoration based on its property(status todo) is done or not
       // return todo of the todolist(inside the model todolist) as li(list item)
       li.addEventListener("click", () => {
-        toggleTodo(index, model);
+        const clickedID = todoItem.id;
+        toggleTodo(clickedID, model);
       });
       //implement toggle todo
       return li;
