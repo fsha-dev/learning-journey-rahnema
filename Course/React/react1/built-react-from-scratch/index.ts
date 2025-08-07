@@ -43,14 +43,34 @@ function renderApp(app: HTMLElement, element: MyElement) {
 interface State {
   count: number;
 }
-
-const useState = (state: State) => {
+const createElement = (
+  type: string,
+  props: Record<string, any> | "null",
+  ...children: (MyElement | string | number)[] //🤔⁉️🙋‍♀️
+): MyElement => {
+  return {
+    type,
+    props: {
+      ...props, //🚨🤔🚨🚨Error?
+      children: children.map((x) =>
+        typeof x === "object" ? x : createTextElement(x)
+      ),
+    },
+  };
+};
+const createTextElement = (x: string | number): MyElement => {
+  return { type: "Text_ELEMENT", props: { nodeValue: `${x}`, children: [] } };
+};
+export const RahAct = {
+  createElement,
+};
+export const useState = (state: State) => {
   let internalState = state;
   const setState = (fn: (state: State) => State) => {
     internalState = fn(internalState);
-    renderApp(app, draw(internalState));
+    renderApp(app, CounterView(internalState));
   };
-  renderApp(app, draw(internalState));
+  renderApp(app, CounterView(internalState));
   return [internalState, setState] as const; //🙋‍♀️⁉️🤔why as const?why tuple, why not
 };
 // 💡When the app first loads, inside useState
@@ -81,8 +101,8 @@ const decreament = () => {
 };
 
 //UI
-function draw(state: State) {
-  //🤔⁉️🙋‍♀️what dose draw do???
+function CounterView(state: State) {
+  //🤔⁉️🙋‍♀️what dose CounterView do???
   const increamentBtn: MyElement = {
     type: "button",
     props: {
