@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "noImplicitAny": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true
+  }
+}

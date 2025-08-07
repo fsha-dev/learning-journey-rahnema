@@ -3,13 +3,17 @@ const useState = (state) => {
     let internalState = state;
     const setState = (fn) => {
         internalState = fn(internalState);
-        render(internalState); //🚨same output?
+        render(internalState); //render when setState runs(increament & decreament)
     };
-    render(internalState); //🚨same output?
+    render(internalState); //initial render() , just one time it renders
     return [internalState, setState]; //why tupple?
 }; //🚨🚨🤔🤔🤔🤔🤔
-const [state, setState] = useState({ count: 0 }, increament());
-console.log(state, setState);
+// App starts ➝ useState runs ➝ initial render() 1.✅
+// ⬇
+// User clicks + button ➝ setState() runs ➝ new state is made ➝ render(new state) 2.✅
+// ⬇
+// User clicks - button ➝ setState() again ➝ another render(new state) 3.✅
+const [state, setState] = useState({ count: 0 });
 const increament = () => {
     setState((state) => ({ count: state.count + 1 }));
 };
